@@ -38,4 +38,3 @@ app.post("/chat", async (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log(`✅ Server running on ${PORT}`));

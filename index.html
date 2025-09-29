@@ -3,50 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chat Bot</title>
+  <title>AI Chatbot</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
-    #chatbox { width: 100%; max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    body { font-family: Arial, sans-serif; background: #f7f7f7; }
+    #chat { max-width: 600px; margin: 40px auto; background: #fff; padding: 20px; border-radius: 8px; }
     .message { margin: 10px 0; }
     .user { font-weight: bold; color: blue; }
     .bot { font-weight: bold; color: green; }
   </style>
 </head>
 <body>
-  <div id="chatbox">
-    <h2>AI Chat Bot 🤖</h2>
+  <div id="chat">
     <div id="messages"></div>
-    <input id="input" type="text" placeholder="Type your message..." style="width:80%;">
+    <input type="text" id="input" placeholder="Type a message..." />
     <button onclick="sendMessage()">Send</button>
   </div>
 
   <script>
     async function sendMessage() {
       const input = document.getElementById("input");
+      const message = input.value.trim();
+      if (!message) return;
+
+      // Show user message
       const messagesDiv = document.getElementById("messages");
-
-      const userMessage = input.value.trim();
-      if (!userMessage) return;
-
-      messagesDiv.innerHTML += `<div class="message user">You: ${userMessage}</div>`;
+      messagesDiv.innerHTML += `<div class="message user">You: ${message}</div>`;
       input.value = "";
 
       try {
-        const res = await fetch("/chat", {
+        // Call backend API
+        const response = await fetch("/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: userMessage }),
+          body: JSON.stringify({ message }),
         });
 
-        const data = await res.json();
+        const data = await response.json();
 
-        if (data.reply) {
-          messagesDiv.innerHTML += `<div class="message bot">Bot: ${data.reply}</div>`;
-        } else {
+        if (data.error) {
           messagesDiv.innerHTML += `<div class="message bot">⚠️ Error: ${data.error}</div>`;
+        } else {
+          messagesDiv.innerHTML += `<div class="message bot">Bot: ${data.reply}</div>`;
         }
       } catch (err) {
         messagesDiv.innerHTML += `<div class="message bot">⚠️ Server error</div>`;
+        console.error(err);
       }
     }
   </script>
