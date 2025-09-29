@@ -12,7 +12,7 @@
   <button onclick="sendMessage()">Send</button>
 
   <script>
-    const API_URL = "https://your-app-name.onrender.com/api/chat"; // Replace with your Render URL
+    const API_URL = "https://your-app-name.onrender.com/api/chat"; // change this to your Render URL
 
     async function sendMessage() {
       const input = document.getElementById("userInput");
@@ -22,14 +22,19 @@
       document.getElementById("messages").innerHTML += `<p>🧑: ${text}</p>`;
       input.value = "";
 
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
-      });
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
+        });
 
-      const data = await res.json();
-      document.getElementById("messages").innerHTML += `<p>🤖: ${data.reply}</p>`;
+        const data = await res.json();
+        document.getElementById("messages").innerHTML += `<p>🤖: ${data.reply}</p>`;
+      } catch (err) {
+        document.getElementById("messages").innerHTML += `<p style="color:red">⚠️ Error: ${err.message}</p>`;
+      }
     }
   </script>
 </body>
+</html>

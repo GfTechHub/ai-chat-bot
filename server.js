@@ -10,10 +10,12 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+// test route
 app.get("/", (req, res) => {
   res.send("AI Server is running ✅");
 });
 
+// AI chat route
 app.post("/api/chat", async (req, res) => {
   try {
     const { message } = req.body;
