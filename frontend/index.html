@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Website</title>
+</head>
+<body>
+  <h1>Ask AI 🤖</h1>
+  <div id="messages"></div>
+  <input type="text" id="userInput" placeholder="Type something..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    const API_URL = "https://your-app-name.onrender.com/api/chat"; // Replace with your Render URL
+
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      document.getElementById("messages").innerHTML += `<p>🧑: ${text}</p>`;
+      input.value = "";
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+      });
+
+      const data = await res.json();
+      document.getElementById("messages").innerHTML += `<p>🤖: ${data.reply}</p>`;
+    }
+  </script>
+</body>

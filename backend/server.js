@@ -10,12 +10,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Route for testing
 app.get("/", (req, res) => {
   res.send("AI Server is running ✅");
 });
 
-// Chat endpoint
 app.post("/api/chat", async (req, res) => {
   try {
     const { message } = req.body;
@@ -27,15 +25,15 @@ app.post("/api/chat", async (req, res) => {
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini", // fast + cheap model
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: message }],
       }),
     });
     
     const data = await response.json();
     res.json({ reply: data.choices[0].message.content });
-  } catch (error) {
-    console.error(error);
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Something went wrong" });
   }
 });

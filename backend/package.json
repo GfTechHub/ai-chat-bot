@@ -1,5 +1,5 @@
 {
-  "name": "ai-website",
+  "name": "ai-chat-bot",
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
