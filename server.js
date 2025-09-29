@@ -1,35 +1,22 @@
 import express from "express";
 import fetch from "node-fetch";
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-
-dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
-
-// Serve index.html directly from root folder
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
 
 // Chat endpoint
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
     
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "meta-llama/llama-3.1-8b-instruct:free", // free model
         messages: [{ role: "user", content: message }],
       }),
     });
@@ -40,15 +27,15 @@ app.post("/chat", async (req, res) => {
       return res.status(400).json({ error: data.error.message });
     }
     
-    res.json({ reply: data.choices[0].message.content });
+    res.json({
+      reply: data.choices[0].message.content,
+    });
   } catch (err) {
-    console.error("❌ Server error:", err);
-    res.status(500).json({ error: "Server error, please try again." });
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
-// Use Render’s provided port
+// Start server
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`✅ Server running on ${PORT}`));
