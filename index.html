@@ -3,65 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chatbot</title>
+  <title>AI Website</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; display: flex; flex-direction: column; height: 100vh; }
-    #chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; }
-    .message { max-width: 70%; padding: 10px; margin: 5px 0; border-radius: 10px; }
-    .user { background: #0d6efd; color: white; align-self: flex-end; }
-    .bot { background: #e9ecef; align-self: flex-start; }
-    #input-container { display: flex; padding: 10px; background: white; border-top: 1px solid #ccc; }
-    input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-    button { margin-left: 10px; padding: 10px 15px; background: #0d6efd; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    body { font-family: Arial, sans-serif; margin: 40px; background: #f4f4f9; }
+    h1 { color: #333; }
+    #chat { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    #messages { margin-bottom: 20px; }
+    .user { color: blue; }
+    .bot { color: green; margin-bottom: 10px; }
+    input, button { padding: 10px; font-size: 16px; }
+    button { margin-left: 10px; }
   </style>
 </head>
 <body>
-
-  <div id="chat-container"></div>
-
-  <div id="input-container">
-    <input type="text" id="user-input" placeholder="Type your message..." />
+  <div id="chat">
+    <h1>Ask the AI 🤖</h1>
+    <div id="messages"></div>
+    <input type="text" id="userInput" placeholder="Type your question..." />
     <button onclick="sendMessage()">Send</button>
   </div>
 
   <script>
-    const chatContainer = document.getElementById('chat-container');
-
-    function addMessage(text, sender) {
-      const msg = document.createElement('div');
-      msg.classList.add('message', sender);
-      msg.innerText = text;
-      chatContainer.appendChild(msg);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
+    const API_URL = "https://your-app-name.onrender.com/api/chat"; // Change to your Render URL
 
     async function sendMessage() {
-      const input = document.getElementById('user-input');
-      const text = input.value.trim();
-      if (!text) return;
+      const input = document.getElementById("userInput");
+      const message = input.value.trim();
+      if (!message) return;
 
-      addMessage(text, 'user');
-      input.value = '';
+      // Display user message
+      const messagesDiv = document.getElementById("messages");
+      messagesDiv.innerHTML += `<p class="user">🧑: ${message}</p>`;
 
-      try {
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer YOUR_API_KEY" // replace this with your OpenAI key
-          },
-          body: JSON.stringify({
-            model: "gpt-4o-mini",
-            messages: [{ role: "user", content: text }]
-          })
-        });
-        const data = await res.json();
-        addMessage("🤖 " + data.choices[0].message.content, 'bot');
-      } catch (err) {
-        addMessage("❌ Error: Could not connect to AI", 'bot');
-      }
+      input.value = "";
+
+      // Send to backend
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await res.json();
+      messagesDiv.innerHTML += `<p class="bot">🤖: ${data.reply}</p>`;
     }
   </script>
-
 </body>
 </html>
