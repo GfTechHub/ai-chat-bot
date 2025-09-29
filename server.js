@@ -27,13 +27,15 @@ app.post("/api/chat", async (req, res) => {
     
     const data = await response.json();
     
+    console.log("🔎 OpenAI API Response:", JSON.stringify(data, null, 2)); // 👈 Debug log
+    
     if (!data.choices || !data.choices[0]) {
-      throw new Error(JSON.stringify(data));
+      throw new Error("Invalid OpenAI response: " + JSON.stringify(data));
     }
     
     res.json({ reply: data.choices[0].message.content });
   } catch (err) {
-    console.error("❌ OpenAI API Error:", err);
+    console.error("❌ OpenAI API Error:", err.message);
     res.status(500).json({ reply: "⚠️ AI request failed. Check server logs." });
   }
 });
