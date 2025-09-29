@@ -12,10 +12,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// Serve static frontend from public folder
-app.use(express.static(path.join(__dirname, "public")));
+// Serve index.html directly from root folder
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
-// AI chat endpoint
+// Chat endpoint
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
@@ -40,11 +42,12 @@ app.post("/chat", async (req, res) => {
     
     res.json({ reply: data.choices[0].message.content });
   } catch (err) {
+    console.error("❌ Server error:", err);
     res.status(500).json({ error: "Server error, please try again." });
   }
 });
 
-// Render requires process.env.PORT
+// Use Render’s provided port
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
