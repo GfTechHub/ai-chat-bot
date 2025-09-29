@@ -1,124 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Chatbot</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chat Bot</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0d1117;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-
-    .chat-container {
-      width: 90%;
-      max-width: 600px;
-      height: 80vh;
-      background: #161b22;
-      border-radius: 10px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .chat-box {
-      flex: 1;
-      padding: 15px;
-      overflow-y: auto;
-    }
-
-    .message {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 6px;
-      max-width: 75%;
-      line-height: 1.4;
-    }
-
-    .user {
-      background: #238636;
-      margin-left: auto;
-    }
-
-    .bot {
-      background: #30363d;
-      margin-right: auto;
-    }
-
-    .input-box {
-      display: flex;
-      border-top: 1px solid #30363d;
-    }
-
-    .input-box input {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      outline: none;
-      background: #0d1117;
-      color: #fff;
-    }
-
-    .input-box button {
-      background: #238636;
-      border: none;
-      padding: 10px 20px;
-      cursor: pointer;
-      color: #fff;
-      font-weight: bold;
-    }
-
-    .input-box button:hover {
-      background: #2ea043;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+    #chatbox { width: 100%; max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    .message { margin: 10px 0; }
+    .user { font-weight: bold; color: blue; }
+    .bot { font-weight: bold; color: green; }
   </style>
 </head>
 <body>
-  <div class="chat-container">
-    <div class="chat-box" id="chat-box"></div>
-    <div class="input-box">
-      <input type="text" id="user-input" placeholder="Type your message..." />
-      <button onclick="sendMessage()">Send</button>
-    </div>
+  <div id="chatbox">
+    <h2>AI Chat Bot 🤖</h2>
+    <div id="messages"></div>
+    <input id="input" type="text" placeholder="Type your message..." style="width:80%;">
+    <button onclick="sendMessage()">Send</button>
   </div>
 
   <script>
     async function sendMessage() {
-      const input = document.getElementById("user-input");
-      const message = input.value.trim();
-      if (!message) return;
+      const input = document.getElementById("input");
+      const messagesDiv = document.getElementById("messages");
 
-      addMessage(message, "user");
+      const userMessage = input.value.trim();
+      if (!userMessage) return;
+
+      messagesDiv.innerHTML += `<div class="message user">You: ${userMessage}</div>`;
       input.value = "";
 
       try {
-        const res = await fetch("/api/chat", {
+        const res = await fetch("/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message }),
+          body: JSON.stringify({ message: userMessage }),
         });
 
         const data = await res.json();
-        addMessage(data.reply, "bot");
-      } catch (err) {
-        addMessage("⚠️ Server error, please try again.", "bot");
-        console.error(err);
-      }
-    }
 
-    function addMessage(text, sender) {
-      const chatBox = document.getElementById("chat-box");
-      const msg = document.createElement("div");
-      msg.className = `message ${sender}`;
-      msg.textContent = text;
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
+        if (data.reply) {
+          messagesDiv.innerHTML += `<div class="message bot">Bot: ${data.reply}</div>`;
+        } else {
+          messagesDiv.innerHTML += `<div class="message bot">⚠️ Error: ${data.error}</div>`;
+        }
+      } catch (err) {
+        messagesDiv.innerHTML += `<div class="message bot">⚠️ Server error</div>`;
+      }
     }
   </script>
 </body>

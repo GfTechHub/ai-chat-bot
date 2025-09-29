@@ -1,12 +1,21 @@
 import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
-const app = express();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
 app.use(express.json());
 
+// Serve static frontend from public folder
+app.use(express.static(path.join(__dirname, "public")));
+
+// AI chat endpoint
 app.post("/chat", async (req, res) => {
   try {
     const { message } = req.body;
@@ -15,7 +24,7 @@ app.post("/chat", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
@@ -24,12 +33,19 @@ app.post("/chat", async (req, res) => {
     });
     
     const data = await response.json();
-    res.json(data);
+    
+    if (data.error) {
+      return res.status(400).json({ error: data.error.message });
+    }
+    
+    res.json({ reply: data.choices[0].message.content });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Server error, please try again." });
   }
 });
 
-app.listen(process.env.PORT || 10000, () => {
-  console.log(`✅ Server running on port ${process.env.PORT || 10000}`);
+// Render requires process.env.PORT
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });
