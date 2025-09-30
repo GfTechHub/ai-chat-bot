@@ -36,10 +36,10 @@
 
     function addMessage(sender, text) {
       const msg = document.createElement("div");
-      msg.classList.add("d-flex", "mb-3", sender === "user" ? "justify-content-end" : "justify-content-start");
+      msg.classList.add(sender === "user" ? "user-message-wrapper" : "bot-message-wrapper");
 
       msg.innerHTML = `
-        <div class="p-2 rounded ${sender === "user" ? "bg-primary text-white" : "bg-dark-subtle text-dark"}" style="max-width: 75%;">
+        <div class="${sender === "user" ? "user-message" : "bot-message"}">
           ${text}
         </div>
       `;
@@ -50,9 +50,9 @@
 
     function addTypingIndicator() {
       const dots = document.createElement("div");
-      dots.classList.add("d-flex", "mb-3", "justify-content-start");
+      dots.classList.add("bot-message-wrapper");
       dots.innerHTML = `
-        <div class="typing-indicator p-2 rounded bg-dark-subtle text-dark">
+        <div class="typing-indicator">
           <span></span><span></span><span></span>
         </div>
       `;

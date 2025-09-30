@@ -13,10 +13,48 @@
   background: #1e1e2e;
   border-top: 1px solid #444;
   border-bottom: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Message Wrappers */
+.user-message-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin: 8px 0;
+}
+
+.bot-message-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin: 8px 0;
+}
+
+/* User message bubble */
+.user-message {
+  background-color: #0d6efd;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 75%;
+  word-wrap: break-word;
+}
+
+/* Bot message bubble */
+.bot-message {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  max-width: 75%;
+  word-wrap: break-word;
 }
 
 /* Typing dots animation */
 .typing-indicator {
+  background-color: #2a2a2a;
+  padding: 10px;
+  border-radius: 12px;
   display: flex;
   gap: 5px;
   align-items: center;
@@ -25,7 +63,7 @@
 .typing-indicator span {
   width: 6px;
   height: 6px;
-  background: #555;
+  background: #aaa;
   border-radius: 50%;
   display: inline-block;
   animation: blink 1.4s infinite both;
@@ -37,28 +75,4 @@
 @keyframes blink {
   0%, 80%, 100% { opacity: 0.2; }
   40% { opacity: 1; }
-}
-
-
-
-.bot-message {
-  background-color: #2a2a2a;  /* dark gray bubble */
-  color: #ffffff;             /* ✅ white text */
-  padding: 10px 14px;
-  border-radius: 10px;
-  margin: 8px 0;
-  max-width: 75%;
-  align-self: flex-start;     /* bot messages on the left */
-}
-
-
-
-.user-message {
-  background-color: #0d6efd;  /* Bootstrap primary blue */
-  color: #ffffff;             /* white text */
-  padding: 10px 14px;
-  border-radius: 10px;
-  margin: 8px 0;
-  max-width: 75%;
-  align-self: flex-end;       /* user messages on the right */
 }
